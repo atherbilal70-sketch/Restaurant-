@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>إلى ورود.. كوني بأكمله</title>
+
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Google Fonts: Amiri (romantic serif) + Cairo (body) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=Cairo:wght@300;400;600;700;900&display=swap" rel="stylesheet">
+
+<!-- FontAwesome -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+
+<style>
+  :root{
+    --rose-deep:#e11d48;
+    --rose-soft:#fbcfe8;
+    --cream:#fffafb;
+    --gold:#d4af37;
+  }
+
+  html{scroll-behavior:smooth;}
+
+  body{
+    font-family:'Cairo', sans-serif;
+    background-color:var(--cream);
+    overflow-x:hidden;
+  }
+
+  .font-amiri{font-family:'Amiri', serif;}
+
+  /* ---------- Petals background layer ---------- */
+  #petals-canvas{
+    position:fixed;
+    inset:0;
+    width:100%;
+    height:100%;
+    pointer-events:none;
+    z-index:40;
+  }
+
+  /* ---------- Hero gradient ---------- */
+  .hero-gradient{
+    background:linear-gradient(160deg, #fff1f2 0%, #ffe4e9 35%, #fbcfe8 70%, #f8b4d9 100%);
+  }
+
+  .glow-text{
+    text-shadow:0 0 25px rgba(225,29,72,0.25);
+  }
+
+  /* Scroll down button glow */
+  .scroll-btn{
+    animation:bounceGlow 2.4s ease-in-out infinite;
+  }
+  @keyframes bounceGlow{
+    0%,100%{ transform:translateY(0); box-shadow:0 0 15px 2px rgba(225,29,72,.35); }
+    50%{ transform:translateY(10px); box-shadow:0 0 30px 6px rgba(225,29,72,.55); }
+  }
+
+  /* ---------- Envelope ---------- */
+  .envelope-wrap{
+    perspective:1400px;
+  }
+
+  .envelope{
+    position:relative;
+    width:100%;
+    max-width:380px;
+    aspect-ratio:3/2;
+    margin:0 auto;
+    cursor:pointer;
+  }
+
+  .envelope-body{
+    position:absolute;
+    inset:0;
+    background:linear-gradient(135deg,#fff,#fff5f7);
+    border:2px solid var(--rose-soft);
+    border-radius:14px;
+    box-shadow:0 20px 45px -15px rgba(225,29,72,.35);
+    overflow:hidden;
+  }
+
+  .envelope-pocket{
+    position:absolute;
+    inset:0;
+    background:linear-gradient(160deg,#ffe4ea,#ffd3de);
+    clip-path:polygon(0 100%, 50% 42%, 100% 100%);
+    z-index:3;
+    border-radius:0 0 14px 14px;
+  }
+
+  .envelope-flap{
+    position:absolute;
+    top:0; left:0; right:0;
+    height:60%;
+    background:linear-gradient(160deg,#ffd3de,#ffb8c9);
+    clip-path:polygon(0 0, 100% 0, 50% 100%);
+    transform-origin:top center;
+    transition:transform .9s cubic-bezier(.68,-0.4,.27,1.4);
+    z-index:5;
+    border-radius:14px 14px 0 0;
+  }
+
+  .envelope.open .envelope-flap{
+    transform:rotateX(180deg);
+    z-index:1;
+  }
+
+  .heart-seal{
+    position:absolute;
+    top:44%;
+    left:50%;
+    transform:translate(-50%,-50%);
+    z-index:6;
+    color:var(--rose-deep);
+    font-size:2.1rem;
+    filter:drop-shadow(0 3px 6px rgba(0,0,0,.25));
+    transition:opacity .4s ease, transform .4s ease;
+  }
+  .envelope.open .heart-seal{
+    opacity:0;
+    transform:translate(-50%,-50%) scale(0.4);
+  }
+
+  .letter-card{
+    position:absolute;
+    left:5%;
+    right:5%;
+    bottom:6%;
+    top:14%;
+    background:var(--cream);
+    border-radius:10px;
+    box-shadow:0 10px 30px rgba(0,0,0,.15);
+    z-index:2;
+    transform:translateY(6%);
+    opacity:0;
+    transition:transform .8s cubic-bezier(.2,.8,.2,1) .15s, opacity .6s ease .15s;
+    overflow:hidden;
+  }
+
+  .envelope.open .letter-card{
+    transform:translateY(-58%);
+    opacity:1;
+    z-index:10;
+  }
+
+  .envelope-hint{
+    transition:opacity .3s ease;
+  }
+  .envelope.open .envelope-hint{ opacity:0; }
+
+  /* ---------- Memory cards ---------- */
+  .memory-card{
+    transition:transform .45s ease, box-shadow .45s ease;
+  }
+  .memory-card:hover{
+    transform:translateY(-8px) scale(1.03);
+    box-shadow:0 25px 45px -15px rgba(225,29,72,.4);
+  }
+  .memory-card img{
+    transition:transform .6s ease;
+  }
+  .memory-card:hover img{
+    transform:scale(1.08);
+  }
+
+  /* ---------- Surprise button ---------- */
+  .pulse-btn{
+    animation:pulseRose 2s infinite;
+  }
+  @keyframes pulseRose{
+    0%{ box-shadow:0 0 0 0 rgba(225,29,72,.55); }
+    70%{ box-shadow:0 0 0 22px rgba(225,29,72,0); }
+    100%{ box-shadow:0 0 0 0 rgba(225,29,72,0); }
+  }
+
+  #final-declaration{
+    transition:opacity .8s ease, transform .8s ease;
+  }
+  #final-declaration.hidden-state{
+    opacity:0;
+    transform:translateY(40px);
+    pointer-events:none;
+  }
+  #final-declaration.show-state{
+    opacity:1;
+    transform:translateY(0);
+  }
+
+  /* Petal (single) used for confetti burst */
+  .burst-petal{
+    position:fixed;
+    top:50%;
+    left:50%;
+    font-size:1.4rem;
+    color:var(--rose-deep);
+    pointer-events:none;
+    z-index:60;
+    will-change:transform, opacity;
+  }
+
+  ::selection{ background:var(--rose-soft); color:#7f1d1d; }
+</style>
+</head>
+
+<body class="text-rose-900 antialiased">
+
+<!-- ============ Floating Petals Canvas (background ambient effect) ============ -->
+<canvas id="petals-canvas"></canvas>
+
+<!-- ============ 1. HERO SECTION ============ -->
+<section class="hero-gradient min-h-screen relative flex flex-col items-center justify-center text-center px-6 overflow-hidden">
+
+  <!-- soft decorative glow circles -->
+  <div class="absolute -top-24 -right-24 w-72 h-72 bg-pink-300/30 rounded-full blur-3xl"></div>
+  <div class="absolute -bottom-24 -left-24 w-72 h-72 bg-rose-300/30 rounded-full blur-3xl"></div>
+
+  <i class="fa-solid fa-heart text-rose-500 text-3xl mb-6 animate-pulse"></i>
+
+  <h1 class="font-amiri glow-text text-4xl sm:text-6xl md:text-7xl font-bold text-rose-700 leading-relaxed">
+    إلى ورود.. كوني بأكمله
+  </h1>
+
+  <p class="font-amiri text-lg sm:text-2xl mt-6 text-rose-600 max-w-2xl leading-loose">
+    في عالمٍ مليء بالورود، اخترتُ قلبك ليكون بستاني الوحيد،
+    فكوني أنتِ الفصل الذي لا ينتهي في حكايتي.
+  </p>
+
+  <!-- Scroll Down Button -->
+  <a href="#envelope-section" class="scroll-btn mt-16 inline-flex items-center justify-center w-14 h-14 rounded-full bg-white/70 backdrop-blur border border-rose-300 text-rose-600 text-xl hover:bg-white transition">
+    <i class="fa-solid fa-chevron-down"></i>
+  </a>
+</section>
+
+<!-- ============ 2. INTERACTIVE ENVELOPE & LOVE LETTER ============ -->
+<section id="envelope-section" class="py-24 px-6 bg-[var(--cream)] relative">
+  <div class="max-w-3xl mx-auto text-center mb-14">
+    <h2 class="font-amiri text-3xl sm:text-4xl font-bold text-rose-700 mb-3">رسالة من القلب</h2>
+    <p class="text-rose-500">اضغطي على المغلف لتفتحي رسالتي إليكِ</p>
+  </div>
+
+  <div class="envelope-wrap">
+    <div id="envelope" class="envelope">
+      <div class="envelope-body">
+
+        <!-- Letter content: EDIT THE LOVE LETTER TEXT HERE -->
+        <div class="letter-card p-5 sm:p-8 overflow-y-auto">
+          <p class="font-amiri text-rose-700 text-base sm:text-lg leading-loose text-right">
+            حبيبتي ورود،
+            <br><br>
+            منذ اللحظة التي عرفتُ فيها اسمكِ، شعرتُ أن الورود الحقيقية ليست تلك التي تُزرع في الحدائق،
+            بل أنتِ... زهرتي التي تفتّحت في قلبي ولن تذبل أبدًا.
+            <br><br>
+            كل صباحٍ أراكِ فيه هو صباحٌ جديد أهداني إياه القدر، وكل لحظة أقضيها بقربك تزرع في داخلي
+            سعادةً لا تشبه شيئًا عرفته من قبل. أنتِ العطر الذي يملأ أيامي، والضوء الذي يبدد كل عتمة.
+            <br><br>
+            أحبكِ يا ورود، لا كما تُحَب الأشياء الجميلة، بل كما يُحَب الوطن، وكما يُحَب الهواء الذي لا حياة بدونه.
+            <br><br>
+            أعدكِ أن أبقى بجانبكِ في كل فصولي، أرويكِ بالحب حين تعطشين، وأحميكِ من الرياح حين تشتد.
+            <br><br>
+            إلى الأبد،<br>
+            <span class="text-gold font-bold" style="color:var(--gold)">من يحبك أكثر من نفسه</span>
+          </p>
+        </div>
+
+        <div class="envelope-pocket"></div>
+        <div class="envelope-flap"></div>
+        <i class="fa-solid fa-heart heart-seal"></i>
+      </div>
+    </div>
+    <p class="envelope-hint text-center text-rose-400 mt-6 text-sm">
+      <i class="fa-solid fa-hand-pointer ml-1"></i> اضغطي لفتح الرسالة
+    </p>
+  </div>
+</section>
+
+<!-- ============ 3. MEMORY PHOTO GRID ============ -->
+<section class="py-24 px-6 bg-gradient-to-b from-[var(--cream)] to-rose-50">
+  <div class="max-w-6xl mx-auto">
+    <h2 class="font-amiri text-3xl sm:text-4xl font-bold text-rose-700 text-center mb-14">أجمل لحظاتنا معاً</h2>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+
+      <!-- Memory Card 1 : EDIT IMAGE SRC / CAPTION / DATE BELOW -->
+      <div class="memory-card bg-white rounded-2xl overflow-hidden shadow-lg">
+        <div class="h-64 overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1518199266791-5375a83190b7?q=80&w=800&auto=format&fit=crop" alt="ذكرى جميلة" class="w-full h-full object-cover">
+        </div>
+        <div class="p-5 text-right">
+          <h3 class="font-amiri text-xl font-bold text-rose-700">أول لقاء</h3>
+          <p class="text-rose-400 text-sm mt-1"><i class="fa-regular fa-calendar ml-1"></i> ١٤ فبراير</p>
+        </div>
+      </div>
+
+      <!-- Memory Card 2 -->
+      <div class="memory-card bg-white rounded-2xl overflow-hidden shadow-lg">
+        <div class="h-64 overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1518895949257-7621c3c786d7?q=80&w=800&auto=format&fit=crop" alt="ذكرى جميلة" class="w-full h-full object-cover">
+        </div>
+        <div class="p-5 text-right">
+          <h3 class="font-amiri text-xl font-bold text-rose-700">مساء لا يُنسى</h3>
+          <p class="text-rose-400 text-sm mt-1"><i class="fa-regular fa-calendar ml-1"></i> ٢٠ مايو</p>
+        </div>
+      </div>
+
+      <!-- Memory Card 3 -->
+      <div class="memory-card bg-white rounded-2xl overflow-hidden shadow-lg sm:col-span-2 lg:col-span-1">
+        <div class="h-64 overflow-hidden">
+          <img src="https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?q=80&w=800&auto=format&fit=crop" alt="ذكرى جميلة" class="w-full h-full object-cover">
+        </div>
+        <div class="p-5 text-right">
+          <h3 class="font-amiri text-xl font-bold text-rose-700">رحلتنا الصغيرة</h3>
+          <p class="text-rose-400 text-sm mt-1"><i class="fa-regular fa-calendar ml-1"></i> ٣ أغسطس</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ============ 4. THE GRAND SURPRISE BUTTON ============ -->
+<section class="py-28 px-6 bg-rose-50 flex flex-col items-center text-center relative overflow-hidden">
+
+  <button id="surprise-btn" class="pulse-btn font-amiri text-xl sm:text-2xl font-bold text-white bg-rose-600 hover:bg-rose-700 transition rounded-full px-10 py-5 shadow-xl">
+    <i class="fa-solid fa-gift ml-2"></i> اضغطي هنا يا ورود
+  </button>
+
+  <!-- Final Declaration Box (hidden by default) -->
+  <div id="final-declaration" class="hidden-state max-w-2xl mt-14 bg-white border-2 border-rose-200 rounded-2xl p-8 sm:p-10 shadow-2xl relative">
+    <i class="fa-solid fa-quote-right text-rose-200 text-4xl absolute top-4 right-6"></i>
+    <h3 class="font-amiri text-2xl sm:text-3xl font-bold text-rose-700 mb-4">عهدي الأبدي لكِ</h3>
+    <p class="font-amiri text-rose-600 text-lg leading-loose">
+      أعدكِ يا ورود، أن يبقى حبي لكِ كالنقش في الحجر، لا تمحوه الأيام ولا تُبهته السنين.
+      سأظل أحبكِ في الربيع كما في الشتاء، في الفرح كما في الألم، وفي كل نبضة من قلبي
+      ستكتب حروف اسمكِ من جديد. أنتِ اختياري اليوم، وغدًا، وفي كل الأزمنة القادمة.
+      <br><br>
+      إلى الأبد وأكثر 🤍
+    </p>
+  </div>
+</section>
+
+<!-- ============ 5. FOOTER ============ -->
+<footer class="bg-rose-700 text-rose-50 text-center py-6 px-4">
+  <p class="font-cairo text-sm sm:text-base">صُنع بكل حب لـ ورود © 2026</p>
+</footer>
+
+<script>
+/* =====================================================================
+   PETALS BACKGROUND ANIMATION (lightweight canvas-based, ambient)
+   ===================================================================== */
+(function ambientPetals(){
+  const canvas = document.getElementById('petals-canvas');
+  const ctx = canvas.getContext('2d');
+  let w, h;
+
+  function resize(){
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  const PETAL_COUNT = 18; // keep low for performance
+  const petals = [];
+
+  function makePetal(initial){
+    return {
+      x: Math.random() * w,
+      y: initial ? Math.random() * h : -20,
+      size: 8 + Math.random() * 10,
+      speedY: 0.6 + Math.random() * 1.2,
+      speedX: Math.random() * 0.6 - 0.3,
+      rotation: Math.random() * 360,
+      rotSpeed: (Math.random() - 0.5) * 2,
+      sway: Math.random() * Math.PI * 2,
+      opacity: 0.5 + Math.random() * 0.4
+    };
+  }
+
+  for(let i=0;i<PETAL_COUNT;i++) petals.push(makePetal(true));
+
+  function drawPetal(p){
+    ctx.save();
+    ctx.translate(p.x, p.y);
+    ctx.rotate(p.rotation * Math.PI/180);
+    ctx.globalAlpha = p.opacity;
+    ctx.fillStyle = '#e11d48';
+    ctx.beginPath();
+    ctx.ellipse(0, 0, p.size*0.55, p.size, Math.PI/4, 0, Math.PI*2);
+    ctx.fill();
+    ctx.restore();
+  }
+
+  function animate(){
+    ctx.clearRect(0,0,w,h);
+    petals.forEach(p=>{
+      p.sway += 0.02;
+      p.y += p.speedY;
+      p.x += p.speedX + Math.sin(p.sway)*0.4;
+      p.rotation += p.rotSpeed;
+
+      if(p.y > h + 20){
+        Object.assign(p, makePetal(false));
+      }
+      drawPetal(p);
+    });
+    requestAnimationFrame(animate);
+  }
+  animate();
+})();
+
+/* =====================================================================
+   ENVELOPE OPEN / CLOSE TOGGLE
+   ===================================================================== */
+const envelope = document.getElementById('envelope');
+envelope.addEventListener('click', () => {
+  envelope.classList.toggle('open');
+});
+
+/* =====================================================================
+   GRAND SURPRISE BUTTON: petal burst + reveal final declaration
+   ===================================================================== */
+const surpriseBtn = document.getElementById('surprise-btn');
+const finalDeclaration = document.getElementById('final-declaration');
+
+function burstPetals(){
+  const icons = ['fa-solid fa-heart', 'fa-solid fa-seedling', 'fa-solid fa-fan'];
+  const total = 40;
+
+  for(let i=0;i<total;i++){
+    const petal = document.createElement('i');
+    petal.className = icons[Math.floor(Math.random()*icons.length)] + ' burst-petal';
+
+    const angle = Math.random() * Math.PI * 2;
+    const distance = 200 + Math.random() * 400;
+    const endX = Math.cos(angle) * distance;
+    const endY = Math.sin(angle) * distance - 150; // bias upward
+
+    petal.style.fontSize = (0.9 + Math.random()*1.4) + 'rem';
+    petal.style.color = Math.random() > 0.5 ? '#e11d48' : '#d4af37';
+
+    document.body.appendChild(petal);
+
+    const animation = petal.animate([
+      { transform: 'translate(-50%, -50%) rotate(0deg) scale(0.6)', opacity: 1 },
+      { transform: `translate(calc(-50% + ${endX}px), calc(-50% + ${endY}px)) rotate(${360 + Math.random()*360}deg) scale(1.1)`, opacity: 0 }
+    ], {
+      duration: 1400 + Math.random()*900,
+      easing: 'cubic-bezier(.2,.7,.3,1)'
+    });
+
+    animation.onfinish = () => petal.remove();
+  }
+}
+
+surpriseBtn.addEventListener('click', () => {
+  burstPetals();
+  finalDeclaration.classList.remove('hidden-state');
+  finalDeclaration.classList.add('show-state');
+  finalDeclaration.scrollIntoView({behavior:'smooth', block:'center'});
+});
+</script>
+
+</body>
+</html>
